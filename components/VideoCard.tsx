@@ -132,7 +132,7 @@ const  VideoCard: React.FC<VideoCardProps> = ({video, onDownload}) => {
             <div className="flex justify-between items-center mt-4">
               <div className="text-sm font-semibold">
                 Compression:{" "}
-                <span className="text-accent">{compressionPercentage}%</span>
+                <span className="text-primary">{compressionPercentage}%</span>
               </div>
               <button
                 className="btn btn-primary btn-sm"

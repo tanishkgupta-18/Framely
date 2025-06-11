@@ -6,7 +6,7 @@ import { auth } from '@clerk/nextjs/server';
     cloudinary.config({ 
         cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, 
         api_key: process.env.CLOUDINARY_API_KEY, // WE HAVE NOT USED NEXT_PUBLIC_ prefix here because this is a server-side only variable NEEDS TO BE SECURED
-        api_secret: process.env.CLOUDINARY_API__SECRET// Click 'View API Keys' above to copy your API secret
+        api_secret: process.env.CLOUDINARY_API_SECRET// Click 'View API Keys' above to copy your API secret
     });
 
 interface CloudinaryUploadResult {

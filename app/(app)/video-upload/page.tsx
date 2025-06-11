@@ -1,123 +1,106 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 
 function VideoUpload() {
-  const [file, setFile] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [file, setFile] = useState<File | null>(null)
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [isUploading, setIsUploading] = useState(false)
+  const router = useRouter()
 
-  const router = useRouter();
-  const MAX_FILE_SIZE = 70 * 1024 * 1024; // 70 MB
+  const MAX_FILE_SIZE = 70 * 1024 * 1024 // 70 MB
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!file) {
-      alert("Please select a video file.");
-      return;
-    }
+    e.preventDefault()
+    if (!file) return
 
     if (file.size > MAX_FILE_SIZE) {
-      alert("File size exceeds 70MB limit.");
-      return;
+      alert("File too large. Max file size is 70MB.")
+      return
     }
 
-    if (!file.type.startsWith("video/")) {
-      alert("Only video files are allowed.");
-      return;
-    }
-
-    setIsUploading(true);
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title.trim());
-    formData.append("description", description.trim());
-    formData.append("originalSize", file.size.toString());
+    setIsUploading(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("title", title)
+    formData.append("description", description)
+    formData.append("originalSize", file.size.toString())
 
     try {
-      const response = await axios.post("/api/video-upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.status === 200) {
-        alert("Video uploaded successfully!");
-        router.push("/");
-      } else {
-        alert("Something went wrong during upload.");
-      }
-    } catch (error: any) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      await axios.post("/api/video-upload", formData)
+      alert("Upload successful")
+      router.push("/")
+    } catch (error) {
+      console.error(error)
+      alert("Upload failed. Please try again.")
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Upload a Video</h1>
+    <div className="container mx-auto max-w-2xl p-6">
+      <Card className="shadow-lg rounded-2xl">
+        <CardHeader>
+          <CardTitle>📹 Upload Video</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="Enter video title"
+              />
+            </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
-        <div>
-          <label className="label">
-            <span className="label-text font-semibold">Title</span>
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter video description"
+              />
+            </div>
 
-        {/* Description */}
-        <div>
-          <label className="label">
-            <span className="label-text font-semibold">Description</span>
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="textarea textarea-bordered w-full"
-            rows={4}
-            placeholder="Write something about the video..."
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="video">Video File</Label>
+              <Input
+                id="video"
+                type="file"
+                accept="video/*"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                required
+                className="file:bg-green-600 file:hover:bg-green-700 file:text-white file:font-medium file:border-none file:px-1 file:py-1"
+              />
+              <p className="text-sm text-muted-foreground">Max size: 70MB</p>
+            </div>
 
-        {/* File Upload */}
-        <div>
-          <label className="label">
-            <span className="label-text font-semibold">Video File</span>
-          </label>
-          <input
-            type="file"
-            accept="video/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="file-input file-input-bordered w-full"
-            required
-          />
-        </div>
+            {isUploading && <Progress value={50} className="h-2" />}
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="btn btn-primary w-full"
-          disabled={isUploading}
-        >
-          {isUploading ? "Uploading..." : "Upload Video"}
-        </button>
-      </form>
+            <div className="pt-4">
+              <Button type="submit" disabled={isUploading} className="w-full">
+                {isUploading ? "Uploading..." : "Upload Video"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }
 
-export default VideoUpload;
+export default VideoUpload
