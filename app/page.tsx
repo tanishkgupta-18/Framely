@@ -48,7 +48,7 @@ export default function Home() {
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
               From stunning social media content to professional image editing, 
-              Framely's AI-powered tools make creativity effortless and extraordinary.
+              Framely&apos;s AI-powered tools make creativity effortless and extraordinary.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
